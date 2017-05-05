@@ -1,0 +1,9 @@
+<span *ngIf="item?.type === 'text'" [attr.class]="item?.cssClass" [innerHTML]="item?.text"></span>
+<a *ngIf="item?.type === 'anchor_tag'"
+   [attr.class]="item?.cssClass"
+   [innerHTML]="item?.text"
+   (click)="runOnClick()"></a>
+<button *ngIf="item?.type === 'button'"
+        (click)="runOnClick()"
+        [attr.class]="item?.cssClass"
+        [innerHTML]="item?.text"></button>

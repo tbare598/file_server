@@ -1,0 +1,18 @@
+{
+    "version": "0.1.0",
+
+    // The command is a shell script
+    "isShellCommand": true,
+
+    // Run sqlplus
+    "command": "C:\\Program Files (x86)\\Python36\\python.exe",
+
+    "suppressTaskName": true,
+
+    "tasks": [
+        { "taskName": "python",
+          "args": [ "${workspaceRoot}\\x.py" ],
+          "isBuildCommand": true
+        }
+    ]
+}

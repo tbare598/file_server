@@ -1,0 +1,7 @@
+{
+  "DEV" : {
+      "fileName" : "db.DEV.sqlite" },
+      
+  "PROD" : {
+      "fileName" : "db.PROD.sqlite" }
+}

@@ -1,0 +1,5 @@
+<query-area *ngIf="hasTest()"></query-area>
+<data-table [dataTable]="results?.dataTable" [hidden]="loading"></data-table>
+<img src="/app/images/viewtests_loading.gif"
+     [hidden]="!loading"
+     class="view-tests-loading-img" />

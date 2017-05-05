@@ -1,0 +1,9 @@
+{
+  "host" : "wa7baret",
+  "port" : 8080,
+  "debug" : true,
+  "reloader" : true,
+  "systems" : [
+    "DM", "ITM"
+  ]
+}

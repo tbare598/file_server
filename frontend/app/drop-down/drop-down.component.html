@@ -1,0 +1,12 @@
+<div class="dropdown-menu" [hidden]="_hidden">
+  <ul>
+    <li *ngFor="let ddItem of ddItems"
+        (click)="ddItemClicked(ddItem);ddItemChanged(ddItem)">
+      <input type="checkbox"
+             [attr.id]="'chk'+ddItem.id"
+             *ngIf="ddItem.checked === true || ddItem.checked === false"
+             [(ngModel)]="ddItem.checked" />
+      <label [innerHTML]="ddItem.name"></label>
+    </li>
+  </ul>
+</div>

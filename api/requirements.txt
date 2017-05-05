@@ -1,0 +1,5 @@
+#Run with: pip install -r /path/to/requirements.txt
+requests
+bottle
+flake8
+paste #https://bitbucket.org/ianb/paste/download

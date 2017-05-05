@@ -1,0 +1,26 @@
+.dataTable{
+  min-width: 100%;
+  font-size: small;
+}
+
+.dataTable tbody tr:hover{
+  background: #eeeeee;
+}
+
+.dataTable_EmptyRow{
+  text-align: center;
+  font-weight: bold;
+}
+
+.dataTables_length {
+  float: left;
+}
+
+.dataTables_filter {
+  float: right;
+  text-align: right;
+}
+
+.no_background{
+  background: transparent;
+}
