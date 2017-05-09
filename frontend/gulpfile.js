@@ -19,9 +19,9 @@ const bs = require('browser-sync').create();
 const env = require('./env_configs/config.env').config.env;
 
 //Checking if an environment variable has been set
-var envVar = process.env.AUTO_SMOKETEST;
+var envVar = process.env.FILE_SERVER;
 if(envVar){
-  var envVar = JSON.parse(process.env.AUTO_SMOKETEST);
+  var envVar = JSON.parse(process.env.FILE_SERVER);
   if(envVar.env != null) env = envVar.env;
 }
 

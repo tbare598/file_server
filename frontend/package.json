@@ -39,7 +39,7 @@
     "gulp": "^3.9.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^3.6.0",
-    "gulp-typescript": "^2.8.0",
+    "gulp-typescript": "^2.13.0",
     "node-notifier": "^4.6.1",
     "tsconfig-glob": "^0.3.3"
   },

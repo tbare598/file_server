@@ -1,29 +1,12 @@
 import { Routes, RouterModule }  from '@angular/router';
 import { ModuleWithProviders }  from '@angular/core';
-import { AutoSmoketestSystemResolve } from './auto-smoketest/auto-smoketest-system.resolve';
 
-import { QueryAreaComponent } from './query-area/query-area';
-import { ViewTestsComponent } from './view-tests/view-tests';
-import { AutoTestComponent } from './auto-smoketest/auto-smoketest';
+import { FileServerComponent } from './file-server/file-server';
 
 const routeConfig: Routes = [
     { path: '',
-      component: AutoTestComponent,
-      pathMatch: 'full' },
-    { path: ':systemId',
-      component: AutoTestComponent,
-      resolve: {
-        systemId: AutoSmoketestSystemResolve
-      },
-      children: [
-        { path: '',
-          component: QueryAreaComponent },
-        { path: 'viewtests',
-          component: ViewTestsComponent },
-        { path: 'viewtests/:testId',
-          component: ViewTestsComponent }
-      ]
-    }
+      component: FileServerComponent,
+      pathMatch: 'full' }
 ];
 
 export const routes: ModuleWithProviders = RouterModule.forRoot(routeConfig);

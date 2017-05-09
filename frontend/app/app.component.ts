@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'smoketest-app',
+  selector: 'file-server-app',
   templateUrl: 'app/app.component.html',
   styleUrls: ['app/app.component.css']
 })
