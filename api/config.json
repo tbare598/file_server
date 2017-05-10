@@ -1,9 +1,7 @@
 {
-  "host" : "wa7baret",
+  "host" : "localhost",
   "port" : 8080,
   "debug" : true,
   "reloader" : true,
-  "systems" : [
-    "DM", "ITM"
-  ]
+  "file_dir" : "C:\\Users\\tbare\\Downloads"
 }

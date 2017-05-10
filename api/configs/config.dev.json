@@ -2,5 +2,6 @@
   "host" : "localhost",
   "port" : 8080,
   "debug" : true,
-  "reloader" : true
+  "reloader" : true,
+  "file_dir" : "C:\\Users\\tbare\\Downloads"
 }

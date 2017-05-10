@@ -5,13 +5,13 @@
     "isShellCommand": true,
 
     // Run sqlplus
-    "command": "C:\\Program Files (x86)\\Python36\\python.exe",
+    "command": "C:\\Users\\tbare\\AppData\\Local\\Programs\\Python\\Python36-32\\python.exe",
 
     "suppressTaskName": true,
 
     "tasks": [
         { "taskName": "python",
-          "args": [ "${workspaceRoot}\\x.py" ],
+          "args": [ "${workspaceRoot}\\app.1.py" ],
           "isBuildCommand": true
         }
     ]

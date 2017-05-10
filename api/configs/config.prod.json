@@ -2,5 +2,7 @@
   "host" : "localhost",
   "port" : 8082,
   "debug" : false,
-  "reloader" : false
+  "reloader" : false,
+  "file_dir" : "/disk1/transmission"
+
 }

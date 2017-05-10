@@ -1,10 +1,9 @@
 import logging
-import re
 from json import load as jsonLoad
 from json import dumps
 from signal import SIGTERM, signal
 
-from bottle import Bottle, request, response, run
+from bottle import Bottle, request, response, run, static_file
 
 # from configs.tests.tests import getTests
 # from webservices.test.Test import Test
@@ -20,6 +19,7 @@ HOST = CONFIG['host']
 PORT = CONFIG['port']
 RELOADER = CONFIG['reloader']
 DEBUG = CONFIG['debug']
+FILE_DIR = CONFIG['file_dir']
 
 
 def get_loggers():
@@ -39,6 +39,10 @@ def get_loggers():
     return loggers
 
 
+def get_file(path):
+    return static_file(path, root=FILE_DIR)
+
+
 LOGGERS = get_loggers()
 D = LOGGERS['D']
 
@@ -47,9 +51,8 @@ app = Bottle()
 
 @app.hook('before_request')
 def strip_path():
+    D("FILE_PATH->" + request.environ['PATH_INFO'])
     request.environ['PATH_INFO'] = request.environ['PATH_INFO'].rstrip('/')
-    request.environ['SYS_ID'] = request.environ['PATH_INFO'].split('/')[1].upper()
-    request.environ['PATH_INFO'] = re.sub(r'^/[^/]+', '', request.environ['PATH_INFO'])
 
 
 @app.hook('after_request')
@@ -62,12 +65,10 @@ def enable_cors():
     response.headers['Access-Control-Allow-Headers'] = headers
 
 
-@app.get("/test/envs")
-def get_db_envs():
-    results = {'envs': ['ID', 'PROD']}
-
-    response.content_type = 'application/json'
-    return dumps(results)
+@app.get("/static/<path:path>")
+def get_static_file(path):
+    D("GETTING FILE->"+path)
+    return get_file(path)
 
 
 @app.route("/test/submit", method=['OPTIONS', 'POST'])
