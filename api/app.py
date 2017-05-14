@@ -65,12 +65,6 @@ def enable_cors():
     response.headers['Access-Control-Allow-Headers'] = headers
 
 
-@app.get("/static/<path:path>")
-def get_static_file(path):
-    D("GETTING FILE->"+path)
-    return get_file(path)
-
-
 @app.route("/test/submit", method=['OPTIONS', 'POST'])
 def test_submit():
     if request.method == 'OPTIONS':
@@ -81,6 +75,12 @@ def test_submit():
         return dumps(resp)
 
 
+@app.get("/static/<path:path>")
+def get_static_file(path):
+    print("GETTING FILE->"+path)
+    return static_file(path, root=FILE_DIR)
+
+
 def cleanup():
     print("Nothing to cleanup")
 
@@ -89,7 +89,6 @@ signal(SIGTERM, lambda *args: cleanup())
 
 if __name__ == '__main__':
     try:
-        from bottle import PasteServer
-        run(app, server=PasteServer, host=HOST, port=PORT, reloader=RELOADER, debug=DEBUG)
+        run(app, server='cherrypy', host=HOST, port=PORT, reloader=RELOADER, debug=DEBUG)
     finally:
         cleanup()
