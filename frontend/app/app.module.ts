@@ -19,7 +19,7 @@ import { FileServerService } from './file-server/file-server.service';
 
 
 @NgModule({
-    imports: [
+  imports: [
     HttpModule,
     BrowserModule,
     FormsModule,

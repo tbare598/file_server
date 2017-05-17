@@ -4,3 +4,4 @@ bottle
 flake8
 #paste #https://bitbucket.org/ianb/paste/download
 "cherrypy>=3.8.0,<9.0.0"
+python-jose # Downloaded "python-jose-1.3.2", then updated the setup.py file to use pycryptodome, instead of pycrypto, then ran "pytyhon setup.py install"

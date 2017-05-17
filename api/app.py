@@ -5,8 +5,7 @@ from signal import SIGTERM, signal
 
 from bottle import Bottle, request, response, run, static_file
 
-# from configs.tests.tests import getTests
-# from webservices.test.Test import Test
+from webservices.auth.Auth import requires_auth, requires_scope
 
 
 with open('config.json') as data_file:
@@ -59,7 +58,7 @@ def strip_path():
 def enable_cors():
     origin = '*'
     methods = 'GET, POST, OPTIONS'
-    headers = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+    headers = 'Origin, Authorization, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
     response.headers['Access-Control-Allow-Origin'] = origin
     response.headers['Access-Control-Allow-Methods'] = methods
     response.headers['Access-Control-Allow-Headers'] = headers
@@ -73,6 +72,23 @@ def test_submit():
         D("request: " + str(request.json))
         resp = {"error": ""}
         return dumps(resp)
+
+
+@app.route("/test/1", method=['OPTIONS', 'GET'])
+@requires_auth
+def test1():
+    if request.method == 'OPTIONS':
+        return {}
+    else:
+        print("TESTING1")
+        return "TESTING1"
+
+
+@app.get("/test/2")
+@requires_auth
+def test2():
+    print("TESTING2")
+    return requires_scope("TESTING2")
 
 
 @app.get("/static/<path:path>")

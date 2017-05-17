@@ -3,5 +3,9 @@
   "port" : 8080,
   "debug" : true,
   "reloader" : true,
-  "file_dir" : "C:\\Users\\tbare\\Downloads"
+  "file_dir" : "C:\\Users\\tbare\\Downloads",
+  "auth0": {
+    "API_AUDIENCE": "http://thisguy.website:32123/api",
+    "AUTH0_DOMAIN": "file-server.auth0.com"
+  }
 }
