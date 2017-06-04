@@ -33,19 +33,9 @@ function standardHandler(err) {
     gutil.log(util.colors.red('Error'), err.message);
     this.emit('end');
 }
-
-gulp.task('clean-bundle', ['clean-bundle:vendor', 'clean-bundle:app']);
-
-gulp.task('clean-bundle:vendor', function(){
-  return del('dist/vendor.bundle.js');
-});
-
-gulp.task('clean-bundle:app', function(){
-  return del('dist/app.bundle.js');
-});
  
 // clean the contents of the distribution directory
-gulp.task('clean', ['clean-bundle'], function(){
+gulp.task('clean', function(){
   return del('dist/**/*');
 });
 
@@ -63,10 +53,10 @@ gulp.task('env-setup', function(){
     .pipe(gulp.dest('./app/config'));
 });
 
-gulp.task('build-bundle:debug', ['clean-bundle', 'build-bundle:vendor', 'build-bundle:app:debug'])
-gulp.task('build-bundle', ['clean-bundle', 'build-bundle:vendor', 'build-bundle:app'])
+gulp.task('build-bundle:debug', ['clean', 'build-bundle:vendor', 'build-bundle:app:debug'])
+gulp.task('build-bundle', ['clean', 'build-bundle:vendor', 'build-bundle:app'])
 
-gulp.task('build-bundle:vendor', ['clean-bundle:vendor'], function(){
+gulp.task('build-bundle:vendor', ['clean'], function(){
   return gulp.src([
     'node_modules/core-js/client/shim.min.js',
     'node_modules/reflect-metadata/Reflect.js',
@@ -80,7 +70,7 @@ gulp.task('build-bundle:vendor', ['clean-bundle:vendor'], function(){
     .pipe(gulp.dest('dist'))
 });
 
-gulp.task('build-bundle:app:debug', ['clean-bundle:app'], function(){
+gulp.task('build-bundle:app:debug', ['clean'], function(){
   return browserify({
       basedir: '.',
       debug: true,
@@ -100,7 +90,7 @@ gulp.task('build-bundle:app:debug', ['clean-bundle:app'], function(){
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('build-bundle:app', ['clean-bundle:app', 'env-setup'], function(){
+gulp.task('build-bundle:app', ['clean', 'env-setup'], function(){
   return browserify({
       basedir: '.',
       debug: false,
@@ -126,8 +116,7 @@ gulp.task('tslint', function(){
       .on('error', standardHandler);
 });
 
-gulp.task('serve-build', ['tslint', 'build-bundle:debug', 'copy:assets']);
-//gulp.task('serve-build', ['build-bundle:debug', 'copy:assets']);
+gulp.task('serve-build', ['tslint', 'clean', 'copy:assets', 'build-bundle:debug']);
 
 // Run browsersync for development
 gulp.task('serve', ['serve-build'], function(){
@@ -153,8 +142,14 @@ gulp.task('serve', ['serve-build'], function(){
 });
 
 gulp.task('buildAndReload', ['serve-build'], function(done){
-  bs.reload();
-  done();
+  return (function(){
+    try {
+      bs.reload();
+      done();
+    } catch (e){
+      console.log(e);
+    }
+  })();
 });
 
 

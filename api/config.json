@@ -5,7 +5,7 @@
   "reloader" : true,
   "file_dir" : "C:\\Users\\tbare\\Downloads",
   "auth0": {
-    "API_AUDIENCE": "http://thisguy.website:32123/api",
+    "AUTH0_CLIENT_ID": "fgh97AHeJSwz0TkvTR4fQdAF2F3eu2oQ",
     "AUTH0_DOMAIN": "file-server.auth0.com"
   }
 }

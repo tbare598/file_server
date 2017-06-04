@@ -7,7 +7,7 @@ from jose import jwt
 with open('config.json') as data_file:
     CONFIG = jsonLoad(data_file)["auth0"]
 
-API_AUDIENCE = CONFIG["API_AUDIENCE"]
+AUTH0_CLIENT_ID = CONFIG["AUTH0_CLIENT_ID"]
 AUTH0_DOMAIN = CONFIG["AUTH0_DOMAIN"]
 
 
@@ -28,31 +28,31 @@ def get_token_auth_header():
             "code": "invalid_header",
             "description": "Authorization header must start with Bearer",
             "status_code": 401}
-    elif len(parts) == 1:
+    elif len(parts) != 3:
         return {"code": "invalid_header",
-                "description": "Token not found",
-                "status_code": 401}
-    elif len(parts) > 2:
-        return {"code": "invalid_header",
-                "description": "Authorization header must be Bearer token",
+                "description": "Tokens not found",
                 "status_code": 401}
 
-    token = parts[1]
-    return token
+    auth_token = parts[1]
+    id_token = parts[2]
+    return {"auth_token": auth_token, "id_token": id_token}
 
 
-def requires_scope(required_scope):
+def requires_permission(required_perm):
     """Determines if the required scope is present in the access token
     Args:
         required_scope (str): The scope required to access the resource
     """
-    token = get_token_auth_header()
-    if "status_code" in token:
-        return token
-    unverified_claims = jwt.get_unverified_claims(token)
-    token_scopes = unverified_claims["scope"].split()
-    for token_scope in token_scopes:
-        if token_scope == required_scope:
+    tokens = get_token_auth_header()
+    if "status_code" in tokens:
+        return tokens
+    id_token = tokens['id_token']
+    if "status_code" in id_token:
+        return id_token
+    unverified_claims = jwt.get_unverified_claims(id_token)
+    token_perms = unverified_claims["permissions"]
+    for perm in token_perms:
+        if perm == required_perm:
             return True
     return False
 
@@ -62,18 +62,17 @@ def requires_auth(f):
     """
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = get_token_auth_header()
-        if "status_code" in token:
-            return token
+        tokens = get_token_auth_header()
+        if "status_code" in tokens:
+            return tokens
+        auth_token = tokens['auth_token']
+        id_token = tokens['id_token']
         jsonResp = urlopen("https://"+AUTH0_DOMAIN+"/.well-known/jwks.json")
         jwks = jsonLoad(jsonResp)
-        unverified_header = jwt.get_unverified_header(token)
+        unverified_header = jwt.get_unverified_header(id_token)
+
         rsa_key = {}
         for key in jwks["keys"]:
-            print("key")
-            print(key)
-            print("unverified_header")
-            print(unverified_header)
             if key["kid"] == unverified_header["kid"]:
                 rsa_key = {
                     "kty": key["kty"],
@@ -85,28 +84,45 @@ def requires_auth(f):
         if rsa_key:
             try:
                 jwt.decode(
-                    token,
+                    id_token,
                     rsa_key,
                     algorithms=unverified_header["alg"],
-                    audience=API_AUDIENCE,
-                    issuer="https://"+AUTH0_DOMAIN+"/"
+                    issuer="https://"+AUTH0_DOMAIN+"/",
+                    audience=AUTH0_CLIENT_ID,
+                    access_token=auth_token
                 )
             except jwt.ExpiredSignatureError:
                 return {"code": "token_expired",
                         "description": "token is expired",
                         "status_code": 401}
-            except jwt.JWTClaimsError:
+            except jwt.JWTClaimsError as err:
+                print(err)
                 return {"code": "invalid_claims",
                         "description": "incorrect claims, please check the audience and issuer",
                         "status_code": 401}
-            except Exception:
+            except Exception as err:
+                print(err)
                 return {"code": "invalid_header",
                         "description": "Unable to parse authentication token.",
                         "status_code": 400}
-            # Set current user, to this session
-            # _app_ctx_stack.top.current_user = payload
             return f(*args, **kwargs)
         return {"code": "invalid_header",
                 "description": "Unable to find appropriate key",
                 "status_code": 400}
     return decorated
+
+
+def GET_with_auth(app, path):
+    def GET_with_auth_decorator(f):
+        @app.route(path, ['OPTIONS'])
+        def handle_options(*args, **kwargs):
+            return {}
+
+        @app.route(path, ['GET'])
+        @requires_auth
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            return f(*args, **kwargs)
+
+        return decorated
+    return GET_with_auth_decorator

@@ -7,6 +7,7 @@ import { routes } from './app.routes';
 import { AppComponent } from './app.component';
 import { ApplicationMenuComponent } from './application-menu/application-menu';
 import { FileServerComponent } from './file-server/file-server';
+import { FileListComponent } from './file-list/file-list';
 import { DataTableComponent } from './data-table/data-table';
 import { DataTableCellItemComponent } from './data-table/data-table-cell-item/data-table-cell-item';
 import { DropDownComponent } from './drop-down/drop-down.component';
@@ -16,6 +17,7 @@ import { IsUndefinedPipe } from './pipes/custom-pipes';
 import { ClickOutsideDirective } from './click-outside.directive/click-outside.directive';
 import { APIService } from './api/api.service';
 import { FileServerService } from './file-server/file-server.service';
+import { FileListService } from './file-list/file-list.service';
 
 
 @NgModule({
@@ -28,6 +30,7 @@ import { FileServerService } from './file-server/file-server.service';
     AppComponent,
     ApplicationMenuComponent,
     FileServerComponent,
+    FileListComponent,
     DataTableComponent,
     DataTableCellItemComponent,
     DropDownComponent,
@@ -36,6 +39,7 @@ import { FileServerService } from './file-server/file-server.service';
   ],
   providers: [
     FileServerService,
+    FileListService,
     APIService
   ],
   bootstrap: [ AppComponent ]

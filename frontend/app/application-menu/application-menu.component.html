@@ -1,1 +1,12 @@
-Application Menu
+<nav>
+  <div>
+    <button class="btn btn-primary btn-margin" (click)="auth.login()" *ngIf="!auth.authenticated()">Log In</button>
+    <button class="btn btn-priary btn-margin" (click)="auth.logout()" *ngIf="auth.authenticated()">Log Out</button>
+  </div>
+</nav>
+
+<div *ngIf="auth.authenticated()">
+  <h4>You are logged in</h4>
+  <label>Hello:</label><span [innerHTML]="auth?.userProfile?.name"></span>
+  <h4 *ngIf="!auth.authenticated()">You are not logged in, please click 'Log in' button to login</h4>
+</div>
