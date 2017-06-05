@@ -24,7 +24,7 @@ export class APIService {
     }
     
     getFile(filePath: string): Observable<StaticFileGETResModel> {
-      return this.fileGetRequest('static' + filePath)
+      return this.fileGetRequest('static/file' + filePath)
         .map((fileBlob: Blob) => ({ data : fileBlob }) );
     }
 

@@ -6,6 +6,7 @@ from signal import SIGTERM, signal
 from bottle import Bottle, request, response, run, static_file
 
 from webservices.auth.Auth import requires_permission, GET_with_auth
+from webservices.files.Files import get_static_file, get_directory_listing
 
 
 with open('config.json') as data_file:
@@ -63,21 +64,30 @@ def enable_cors():
     response.headers['Access-Control-Allow-Headers'] = headers
 
 
-@GET_with_auth(app, "/static/<path:path>")
-def get_static_file(path):
+@GET_with_auth(app, "/static/directory/<path:path>")
+def GET_static_directory(path):
+    if(requires_permission('read:files')):
+        print("getting file->"+path)
+
+        return get_directory_listing(FILE_DIR, path)
+    return ''
+
+
+@GET_with_auth(app, "/static/file/<path:path>")
+def GET_static_file(path):
     if(requires_permission('read:files')):
         print("getting file->"+path)
         origin = '*'
         methods = 'get, post, options'
         headers = 'Origin, Authorization, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
 
-        response = static_file(path, root=FILE_DIR)
-        response.headers['Access-Control-Allow-Origin'] = origin
-        response.headers['Access-Control-Allow-Methods'] = methods
-        response.headers['Access-Control-Allow-Headers'] = headers
-        return response
-    else:
-        return ''
+        file_resp = get_static_file(FILE_DIR, path)
+        if(file_resp):
+            file_resp.headers['Access-Control-Allow-Origin'] = origin
+            file_resp.headers['Access-Control-Allow-Methods'] = methods
+            file_resp.headers['Access-Control-Allow-Headers'] = headers
+            return file_resp
+    return ''
 
 
 def cleanup():

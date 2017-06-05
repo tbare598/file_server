@@ -11,7 +11,7 @@
 
     "tasks": [
         { "taskName": "python",
-          "args": [ "${workspaceRoot}\\app.1.py" ],
+          "args": [ "${workspaceRoot}\\x.py" ],
           "isBuildCommand": true
         }
     ]

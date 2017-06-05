@@ -45,7 +45,7 @@ export class FileListComponent implements OnInit, OnDestroy {
     });
 
     authHeader.append('Authorization', 'Bearer ' + this.auth.accessToken + ' ' + this.auth.idToken);
-    this.http.get('http://localhost:8080/static/' + this.fileToGet, reqOptions )
+    this.http.get('http://localhost:8080/static/file/' + this.fileToGet, reqOptions )
       .subscribe(resp => {
         console.log(resp);
         let contentType = resp.headers.get('content-type');

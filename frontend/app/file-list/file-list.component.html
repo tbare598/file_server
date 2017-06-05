@@ -3,5 +3,6 @@
 <a #downloadLink [href]="sanitizeUrl(downloadUrl)" [download]="fileToGet" >LINK</a>
 
 <ul>
-    <li *ngFor="let file of fileListModel.list" [innerHTML]="file.type + ' - ' + file.url"></li>
+    <li *ngFor="let file of fileListModel.list"
+        [innerHTML]="file.type + ' - ' + file.url"></li>
 </ul>
