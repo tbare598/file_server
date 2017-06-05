@@ -38,25 +38,6 @@ def get_token_auth_header():
     return {"auth_token": auth_token, "id_token": id_token}
 
 
-def requires_permission(required_perm):
-    """Determines if the required scope is present in the access token
-    Args:
-        required_scope (str): The scope required to access the resource
-    """
-    tokens = get_token_auth_header()
-    if "status_code" in tokens:
-        return tokens
-    id_token = tokens['id_token']
-    if "status_code" in id_token:
-        return id_token
-    unverified_claims = jwt.get_unverified_claims(id_token)
-    token_perms = unverified_claims["permissions"]
-    for perm in token_perms:
-        if perm == required_perm:
-            return True
-    return False
-
-
 def requires_auth(f):
     """Determines if the access token is valid
     """
@@ -112,13 +93,42 @@ def requires_auth(f):
     return decorated
 
 
+def requires_permission(required_perm):
+    """Determines if the required scope is present in the access token
+    Args:
+        required_scope (str): The scope required to access the resource
+    """
+
+    def requires_permission_decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            tokens = get_token_auth_header()
+            if "status_code" in tokens:
+                return tokens
+            id_token = tokens['id_token']
+            if "status_code" in id_token:
+                return id_token
+            unverified_claims = jwt.get_unverified_claims(id_token)
+            token_perms = unverified_claims["permissions"]
+            for perm in token_perms:
+                if perm == required_perm:
+                    return f(*args, **kwargs)
+            return {
+                "code": "permission_not_found",
+                "description": "permission '" + required_perm + "' not found in permissions list",
+                "status_code": 401}
+
+        return decorated
+    return requires_permission_decorator
+
+
 def GET_with_auth(app, path):
     def GET_with_auth_decorator(f):
         @app.route(path, ['OPTIONS'])
         def handle_options(*args, **kwargs):
             return {}
 
-        @app.route(path, ['GET'])
+        @app.get(path)
         @requires_auth
         @wraps(f)
         def decorated(*args, **kwargs):

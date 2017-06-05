@@ -15,6 +15,7 @@ import { DropDownComponent } from './drop-down/drop-down.component';
 import { IsUndefinedPipe } from './pipes/custom-pipes';
 
 import { ClickOutsideDirective } from './click-outside.directive/click-outside.directive';
+import { Auth } from './auth/auth.service';
 import { APIService } from './api/api.service';
 import { FileServerService } from './file-server/file-server.service';
 import { FileListService } from './file-list/file-list.service';
@@ -38,6 +39,7 @@ import { FileListService } from './file-list/file-list.service';
     IsUndefinedPipe
   ],
   providers: [
+    Auth,
     FileServerService,
     FileListService,
     APIService

@@ -1,5 +1,6 @@
 import logging
 from json import load as jsonLoad
+from json import dumps
 # from json import dumps
 from signal import SIGTERM, signal
 
@@ -51,7 +52,8 @@ app = Bottle()
 
 @app.hook('before_request')
 def strip_path():
-    D("FILE_PATH->" + request.environ['PATH_INFO'])
+    D("REQUEST->" + request.environ['PATH_INFO'])
+    request.environ['PATH_INFO'] = request.environ['PATH_INFO'].rstrip('/')
 
 
 @app.hook('after_request')
@@ -64,29 +66,43 @@ def enable_cors():
     response.headers['Access-Control-Allow-Headers'] = headers
 
 
-@GET_with_auth(app, "/static/directory/<path:path>")
-def GET_static_directory(path):
-    if(requires_permission('read:files')):
-        print("getting file->"+path)
+@GET_with_auth(app, "/static/directory")
+@app.get("/static/directory")
+@requires_permission('read:files')
+def GET_static_directory_root():
+    print("getting root directory")
 
-        return get_directory_listing(FILE_DIR, path)
-    return ''
+    resp = {
+        "data": get_directory_listing(FILE_DIR, '.')
+    }
+    return dumps(resp)
+
+
+@GET_with_auth(app, "/static/directory/<path:path>")
+@requires_permission('read:files')
+def GET_static_directory(path):
+    print("getting directory->"+path)
+
+    resp = {
+        "data": get_directory_listing(FILE_DIR, path)
+    }
+    return dumps(resp)
 
 
 @GET_with_auth(app, "/static/file/<path:path>")
+@requires_permission('read:files')
 def GET_static_file(path):
-    if(requires_permission('read:files')):
-        print("getting file->"+path)
-        origin = '*'
-        methods = 'get, post, options'
-        headers = 'Origin, Authorization, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+    print("getting file->"+path)
+    origin = '*'
+    methods = 'get, post, options'
+    headers = 'Origin, Authorization, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
 
-        file_resp = get_static_file(FILE_DIR, path)
-        if(file_resp):
-            file_resp.headers['Access-Control-Allow-Origin'] = origin
-            file_resp.headers['Access-Control-Allow-Methods'] = methods
-            file_resp.headers['Access-Control-Allow-Headers'] = headers
-            return file_resp
+    file_resp = get_static_file(FILE_DIR, path)
+    if(file_resp):
+        file_resp.headers['Access-Control-Allow-Origin'] = origin
+        file_resp.headers['Access-Control-Allow-Methods'] = methods
+        file_resp.headers['Access-Control-Allow-Headers'] = headers
+        return file_resp
     return ''
 
 

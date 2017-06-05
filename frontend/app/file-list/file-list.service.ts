@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { FileListModel } from './file-list';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-
-// TODO: REPLACE
-import { fileListMock } from './file-list.mock';
+import { APIService } from '../api/api.service';
+import { DirectoryListingGETResModel } from '../api/api';
 
 @Injectable()
 export class FileListService {
@@ -24,7 +23,10 @@ export class FileListService {
       return this._fileList$.asObservable();
   }
 
-  constructor() {
-      this.fileList = fileListMock;
+  constructor(private apiService: APIService) {
+      //TODO:REPLACE '' WITH CURRENT DIRECTORY PATH
+      this.apiService.getDirectoryListing('/.').subscribe(
+        (dirListModel: DirectoryListingGETResModel) => this.fileList = dirListModel.data
+      );
   }
 }

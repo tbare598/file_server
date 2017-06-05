@@ -1,9 +1,9 @@
-import { FileModel } from './file-list';
-
 export class FileListModel {
-    list: FileModel[];
+    directories: string[];
+    files: string[];
 
     constructor() {
-        this.list = [];
+        this.directories = [];
+        this.files = [];
     }
 }

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Http, RequestOptions, Headers, ResponseContentType } from '@angular/http';
 import { config } from '../config/config';
-import { StaticFileGETResModel } from './api';
+import { StaticFileGETResModel, DirectoryListingGETResModel } from './api';
 import { Auth } from '../auth/auth.service';
 import 'rxjs/add/operator/map';
 
@@ -27,6 +27,10 @@ export class APIService {
       return this.fileGetRequest('static/file' + filePath)
         .map((fileBlob: Blob) => ({ data : fileBlob }) );
     }
+    
+    getDirectoryListing(dirPath: string): Observable<DirectoryListingGETResModel> {
+      return this.jsonGetRequest('static/directory' + dirPath);
+    }
 
 
     private fileGetRequest(uri: string): Observable<Blob> {
@@ -45,15 +49,15 @@ export class APIService {
     }
 
     
-    // private jsonGetRequest(uri: string): Observable<any> {
-    //   let authHeader: Headers = new Headers();
-    //   authHeader.append('Authorization', 'Bearer ' + this.auth.accessToken + ' ' + this.auth.idToken);
-    //   let reqOptions: RequestOptions = new RequestOptions({
-    //     headers: authHeader
-    //   });
-    //   return this.http.get(uri, reqOptions)
-    //     .map(resp => resp.json());
-    // }
+    private jsonGetRequest(uri: string): Observable<any> {
+      let authHeader: Headers = new Headers();
+      authHeader.append('Authorization', 'Bearer ' + this.auth.accessToken + ' ' + this.auth.idToken);
+      let reqOptions: RequestOptions = new RequestOptions({
+        headers: authHeader
+      });
+      return this.http.get(this.host + '/' + uri, reqOptions)
+        .map(resp => resp.json());
+    }
 
 
     
