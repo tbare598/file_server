@@ -7,9 +7,8 @@ import { FileListComponent } from './file-list/file-list';
 const routeConfig: Routes = [
     { path: '',
       component: FileServerComponent,
-      pathMatch: 'full',
       children: [
-        { path: '',
+        { path: '**',
           component: FileListComponent }
       ]
     }

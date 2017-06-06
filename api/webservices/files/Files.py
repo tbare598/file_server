@@ -16,8 +16,11 @@ def get_directory_listing(root, path):
     if commonprefix([req_path_abs, root]) == root and isdir(req_path_abs):
         files_and_dirs = listdir(req_path_abs)
 
-        directories = []
         files = []
+        directories = []
+        if(root != req_path_abs):
+            directories.append('..')
+
         for thing in files_and_dirs:
             if(isdir(req_path_abs + '/' + thing)):
                 directories.append(thing)

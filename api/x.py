@@ -4,6 +4,6 @@ import os
 root = 'C:\\Users\\tbare\\Downloads'
 
 
-print(get_directory_listing(root, ''))
+print(get_directory_listing(root, 'temp/'))
 
 # print(get_static_file('', root))

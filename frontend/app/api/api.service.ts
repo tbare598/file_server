@@ -41,7 +41,7 @@ export class APIService {
         headers: authHeader,
         responseType: ResponseContentType.Blob
       });
-      return this.http.get(uri, reqOptions)
+      return this.http.get(this.host + '/' + uri, reqOptions)
         .map(resp => {
           let contentType = resp.headers.get('content-type');
           return new Blob([resp.blob()], { type: contentType });
