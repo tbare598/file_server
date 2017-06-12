@@ -7,7 +7,7 @@ from signal import SIGTERM, signal
 from bottle import Bottle, request, response, run, static_file
 
 from webservices.auth.Auth import requires_permission, GET_with_auth
-from webservices.files.Files import get_static_file, get_directory_listing
+from webservices.files.Files import get_static_file, get_directory_listing, get_path_type
 
 
 with open('config.json') as data_file:
@@ -66,8 +66,29 @@ def enable_cors():
     response.headers['Access-Control-Allow-Headers'] = headers
 
 
+@GET_with_auth(app, "/static/type")
+@requires_permission('read:files')
+def GET_path_type_root():
+    print("getting type, at the end of the static content endpoint")
+
+    resp = {
+        "data": 'DIR'
+    }
+    return dumps(resp)
+
+
+@GET_with_auth(app, "/static/type/<path:path>")
+@requires_permission('read:files')
+def GET_path_type(path):
+    print("getting type, at the end of the static content endpoint")
+
+    resp = {
+        "data": get_path_type(FILE_DIR, path)
+    }
+    return dumps(resp)
+
+
 @GET_with_auth(app, "/static/directory")
-@app.get("/static/directory")
 @requires_permission('read:files')
 def GET_static_directory_root():
     print("getting root directory")

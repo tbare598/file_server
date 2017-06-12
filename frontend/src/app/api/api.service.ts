@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Http, RequestOptions, Headers, ResponseContentType } from '@angular/http';
 import { environment } from '../../environments/environment';
-import { StaticFileGETResModel, DirectoryListingGETResModel } from './api';
+import { StaticPathTypeGETResModel, StaticFileGETResModel, DirectoryListingGETResModel } from './api';
 import { Auth } from '../auth/auth.service';
 import 'rxjs/add/operator/map';
 
@@ -21,6 +21,10 @@ export class APIService {
       return this._host;
     }
 
+    getPathType(dirPath: string): Observable<StaticPathTypeGETResModel> {
+      return this.jsonGetRequest('static/type' + dirPath);
+    }
+
     getFile(filePath: string): Observable<StaticFileGETResModel> {
       return this.fileGetRequest('static/file' + filePath)
         .map((fileBlob: Blob) => ({ data : fileBlob }) );
@@ -29,7 +33,6 @@ export class APIService {
     getDirectoryListing(dirPath: string): Observable<DirectoryListingGETResModel> {
       return this.jsonGetRequest('static/directory' + dirPath);
     }
-
 
     private fileGetRequest(uri: string): Observable<Blob> {
       const authHeader: Headers = new Headers();

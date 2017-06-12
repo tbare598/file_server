@@ -1,10 +1,10 @@
-<a #downloadLink [href]="sanitizeUrl(downloadUrl)" [download]="downloadingFile" style="display: none;"></a>
+<a #downloadLink [href]="sanitizeUrl(downloadUrl)" [download]="currFile" style="display: none;"></a>
 <ul>
   <li *ngFor="let dirname of fileListModel.directories"
       [innerHTML]="dirname"
-      (click)="currDir = currDir + '/' + dirname"></li>
+      (click)="routeTo(dirname)"></li>
   <br />
   <li *ngFor="let filename of fileListModel.files"
       [innerHTML]="filename"
-      (click)="downloadFile(filename)"></li>
+      (click)="routeTo(filename)"></li>
 </ul>

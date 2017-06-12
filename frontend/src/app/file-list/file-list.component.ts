@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { APIService } from '../api/api.service';
-import { StaticFileGETResModel } from '../api/api';
+import { StaticPathTypeGETResModel, StaticFileGETResModel } from '../api/api';
 import { FileListService } from './file-list';
 import { Subscription } from 'rxjs/Subscription';
 import { FileListModel } from '../file-list/file-list';
@@ -21,18 +21,19 @@ export class FileListComponent implements OnInit, OnDestroy {
 
   subs: Subscription[] = [];
   fileListModel: FileListModel = new FileListModel();
-  downloadingFile: string;
+  currFile: string;
 
-  get currDir(): string {
+  private get currDir(): string {
     return this.fileListService.currDirPath;
   }
 
-  set currDir(newPath) {
+  private set currDir(newPath) {
     this.fileListService.currDirPath = newPath;
   }
 
   constructor(private fileListService: FileListService,
               private route: ActivatedRoute,
+              private router: Router,
               private apiService: APIService,
               private sanitizer: DomSanitizer) {}
 
@@ -40,17 +41,22 @@ export class FileListComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
-  public downloadFile(filename: string) {
-    const fileToGet = this.currDir === '/' ? '/' + filename : this.currDir + '/' + filename;
-    this.downloadingFile = filename;
-
-    this.apiService.getFile(fileToGet)
-      .subscribe((fileBlob: StaticFileGETResModel) => {
-        const downloadUrl: string = URL.createObjectURL(fileBlob.data);
-        this.downloadLink.nativeElement.href = downloadUrl;
-        this.downloadLink.nativeElement.click();
-        window.URL.revokeObjectURL(downloadUrl);
-      });
+  public routeTo(path: string) {
+    this.router.navigate([this.currDir, path]);
+  }
+  private downloadFile() {
+    if (this.currFile) {
+      const fileToDownload = this.currDir + '/' + this.currFile;
+      this.apiService.getFile(fileToDownload)
+        .subscribe((fileBlob: StaticFileGETResModel) => {
+          if (fileBlob && fileBlob.data != null) {
+            const downloadUrl: string = URL.createObjectURL(fileBlob.data);
+            this.downloadLink.nativeElement.href = downloadUrl;
+            this.downloadLink.nativeElement.click();
+            window.URL.revokeObjectURL(downloadUrl);
+          }
+        });
+    }
   }
 
   ngOnInit() {
@@ -59,7 +65,30 @@ export class FileListComponent implements OnInit, OnDestroy {
     ));
 
     this.route.url.subscribe((url: UrlSegment[]) => {
-      console.log(url);
+      if (url.length > 0) {
+        let pathToCheck = '';
+        url.forEach((urlSeg: UrlSegment) => pathToCheck += '/' + urlSeg.path);
+
+        this.apiService.getPathType(pathToCheck)
+          .subscribe((pathType: StaticPathTypeGETResModel) => {
+            if (pathType.data === 'FILE') {
+              let newPath = '';
+              url.slice(0, url.length - 1).forEach(
+                (urlSeg: UrlSegment) => newPath += '/' + urlSeg.path);
+              this.currDir = newPath;
+
+              this.currFile = url[url.length - 1].path;
+              this.downloadFile();
+            } else if (pathType.data === 'DIR') {
+              this.currDir = pathToCheck;
+            } else {
+              this.router.navigateByUrl('/');
+            }
+          });
+      } else {
+        this.currDir = '/';
+      }
+
     });
   }
 

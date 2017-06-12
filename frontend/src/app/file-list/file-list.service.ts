@@ -16,10 +16,20 @@ export class FileListService {
   }
 
   set currDirPath(newPath: string) {
+    this._currDirPath = newPath;
     this.apiService.getDirectoryListing(newPath).subscribe(
       (dirListModel: DirectoryListingGETResModel) => {
-        this._currDirPath = newPath;
         this.fileList = dirListModel.data;
+        const newPathArr = dirListModel.data.path;
+        if (newPathArr.length > 0) {
+          let constructedPath = '';
+          newPathArr.forEach((segment: string) => {
+            constructedPath += '/' + segment;
+          });
+          this._currDirPath = constructedPath;
+        } else if (newPathArr.length === 0) {
+          this._currDirPath = '/';
+        }
       }
     );
   }
