@@ -10,6 +10,9 @@ with open('config.json') as data_file:
 AUTH0_CLIENT_ID = CONFIG["AUTH0_CLIENT_ID"]
 AUTH0_DOMAIN = CONFIG["AUTH0_DOMAIN"]
 
+jsonResp = urlopen("https://"+AUTH0_DOMAIN+"/.well-known/jwks.json")
+jwks = jsonLoad(jsonResp)
+
 
 def get_token_auth_header():
     """Obtains the access token from the Authorization Header
@@ -48,8 +51,6 @@ def requires_auth(f):
             return tokens
         auth_token = tokens['auth_token']
         id_token = tokens['id_token']
-        jsonResp = urlopen("https://"+AUTH0_DOMAIN+"/.well-known/jwks.json")
-        jwks = jsonLoad(jsonResp)
         unverified_header = jwt.get_unverified_header(id_token)
 
         rsa_key = {}

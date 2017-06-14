@@ -8,4 +8,12 @@ if (environment.production) {
   enableProdMode();
 }
 
+const encode = encodeURIComponent;
+window['encodeURIComponent'] = (component: string) => {
+  return encode(component).replace(/[!'()*]/g, (c) => {
+    // Also encode !, ', (, ), and *
+    return '%' + c.charCodeAt(0).toString(16);
+  });
+}
+
 platformBrowserDynamic().bootstrapModule(AppModule);

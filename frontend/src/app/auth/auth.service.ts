@@ -64,18 +64,18 @@ export class Auth {
   public login() {
     // Call the show method to display the widget.
     this.lock.show();
-  };
+  }
 
   public authenticated() {
     // Check if there's an unexpired JWT
     // It searches for an item in localStorage with key == 'id_token'
     return tokenNotExpired('id_token');
-  };
+  }
 
   public logout() {
     // Remove token from localStorage
     localStorage.removeItem('id_token');
-  };
+  }
 
   randomString (length): string {
     const bytes = new Uint8Array(length);
@@ -86,5 +86,5 @@ export class Auth {
         result.push(charset[random[i] % charset.length]);
     }
     return result.join('');
-}
+  }
 }

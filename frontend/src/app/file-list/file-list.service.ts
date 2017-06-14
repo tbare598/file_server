@@ -47,7 +47,5 @@ export class FileListService {
     return this._fileList$.asObservable();
   }
 
-  constructor(private apiService: APIService) {
-    this.currDirPath = '/';
-  }
+  constructor(private apiService: APIService) {}
 }

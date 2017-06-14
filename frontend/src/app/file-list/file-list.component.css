@@ -1,0 +1,14 @@
+.file-list {
+    padding: 0;
+    margin: 0;
+}
+
+.file-list > li {
+    cursor: pointer;
+    list-style-type: none;
+    background: #ffffff
+}
+
+.file-list > li:hover {
+    background: #eeeeee
+}

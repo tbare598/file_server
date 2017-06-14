@@ -44,19 +44,19 @@ export class FileListComponent implements OnInit, OnDestroy {
   public routeTo(path: string) {
     this.router.navigate([this.currDir, path]);
   }
-  private downloadFile() {
-    if (this.currFile) {
-      const fileToDownload = this.currDir + '/' + this.currFile;
-      this.apiService.getFile(fileToDownload)
-        .subscribe((fileBlob: StaticFileGETResModel) => {
-          if (fileBlob && fileBlob.data != null) {
-            const downloadUrl: string = URL.createObjectURL(fileBlob.data);
-            this.downloadLink.nativeElement.href = downloadUrl;
-            this.downloadLink.nativeElement.click();
-            window.URL.revokeObjectURL(downloadUrl);
-          }
-        });
-    }
+
+  private downloadFile(filename) {
+    this.currFile = filename;
+    const fileToDownload = this.currDir + '/' + this.currFile;
+    this.apiService.getFile(fileToDownload)
+      .subscribe((fileBlob: StaticFileGETResModel) => {
+        if (fileBlob && fileBlob.data != null) {
+          const downloadUrl: string = URL.createObjectURL(fileBlob.data);
+          this.downloadLink.nativeElement.href = downloadUrl;
+          this.downloadLink.nativeElement.click();
+          window.URL.revokeObjectURL(downloadUrl);
+        }
+      });
   }
 
   ngOnInit() {
@@ -67,33 +67,17 @@ export class FileListComponent implements OnInit, OnDestroy {
     this.route.url.subscribe((url: UrlSegment[]) => {
       if (url.length > 0) {
         let pathToCheck = '';
+        console.log(url);
         url.forEach((urlSeg: UrlSegment) => pathToCheck += '/' + urlSeg.path);
 
-        this.apiService.getPathType(pathToCheck)
-          .subscribe((pathType: StaticPathTypeGETResModel) => {
-            if (pathType.data === 'FILE') {
-              let newPath = '';
-              url.slice(0, url.length - 1).forEach(
-                (urlSeg: UrlSegment) => newPath += '/' + urlSeg.path);
-              this.currDir = newPath;
-
-              this.currFile = url[url.length - 1].path;
-              this.downloadFile();
-            } else if (pathType.data === 'DIR') {
-              this.currDir = pathToCheck;
-            } else {
-              this.router.navigateByUrl('/');
-            }
-          });
+        this.currDir = pathToCheck;
       } else {
         this.currDir = '/';
       }
-
     });
   }
 
   ngOnDestroy() {
     this.subs.forEach((sub) => sub.unsubscribe());
   }
-
 }
