@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Http, RequestOptions, Headers, ResponseContentType } from '@angular/http';
 import { environment } from '../../environments/environment';
@@ -13,7 +12,6 @@ export class APIService {
 
 
     constructor(private http: Http,
-                private route: ActivatedRoute,
                 private auth: Auth) {
     }
 

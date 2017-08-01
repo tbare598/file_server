@@ -7,6 +7,7 @@ import { StaticPathTypeGETResModel, StaticFileGETResModel } from '../api/api';
 import { FileListService } from './file-list';
 import { Subscription } from 'rxjs/Subscription';
 import { FileListModel } from '../file-list/file-list';
+import { apiConstants } from '../api/api.constants';
 
 
 @Component({
@@ -22,6 +23,10 @@ export class FileListComponent implements OnInit, OnDestroy {
   subs: Subscription[] = [];
   fileListModel: FileListModel = new FileListModel();
   currFile: string;
+
+  private get filePathPrefix(): string {
+    return apiConstants.filePathPrefix;
+  }
 
   private get currDir(): string {
     return this.fileListService.currDirPath;
@@ -45,20 +50,6 @@ export class FileListComponent implements OnInit, OnDestroy {
     this.router.navigate([this.currDir, path]);
   }
 
-  private downloadFile(filename) {
-    this.currFile = filename;
-    const fileToDownload = this.currDir + '/' + this.currFile;
-    this.apiService.getFile(fileToDownload)
-      .subscribe((fileBlob: StaticFileGETResModel) => {
-        if (fileBlob && fileBlob.data != null) {
-          const downloadUrl: string = URL.createObjectURL(fileBlob.data);
-          this.downloadLink.nativeElement.href = downloadUrl;
-          this.downloadLink.nativeElement.click();
-          window.URL.revokeObjectURL(downloadUrl);
-        }
-      });
-  }
-
   ngOnInit() {
     this.subs.push(this.fileListService.fileList$.subscribe(
         (fileListModel: FileListModel) => this.fileListModel = fileListModel
@@ -67,7 +58,6 @@ export class FileListComponent implements OnInit, OnDestroy {
     this.route.url.subscribe((url: UrlSegment[]) => {
       if (url.length > 0) {
         let pathToCheck = '';
-        console.log(url);
         url.forEach((urlSeg: UrlSegment) => pathToCheck += '/' + urlSeg.path);
 
         this.currDir = pathToCheck;

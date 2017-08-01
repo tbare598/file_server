@@ -4,7 +4,7 @@
       [innerHTML]="dirname"
       (click)="routeTo(dirname)"></li>
   <br />
-  <li *ngFor="let filename of fileListModel.files"
-      [innerHTML]="filename"
-      (click)="downloadFile(filename)"></li>
+  <a *ngFor="let filename of fileListModel.files"
+     [attr.href]="filePathPrefix + currDir + '/' + filename"
+     [innerHTML]="filename"></a>
 </ul>

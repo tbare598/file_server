@@ -1,0 +1,9 @@
+{
+  "/api": {
+    "target": "http://tbare02.home:8080",
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/api": "" },
+    "secure": false
+  }
+}

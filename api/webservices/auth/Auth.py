@@ -1,7 +1,8 @@
 from json import load as jsonLoad
+import datetime
 from urllib.request import urlopen
 from functools import wraps
-from bottle import request
+from bottle import request, response
 from jose import jwt
 
 with open('config.json') as data_file:
@@ -18,21 +19,34 @@ def get_token_auth_header():
     """Obtains the access token from the Authorization Header
     """
     auth = request.headers.get("Authorization", None)
-    if not auth:
-        return {
-            "code": "authorization_header_missing",
-            "description": "Authorization header is expected",
-            "status_code": 401}
-
-    parts = auth.split()
+    cookie = request.headers.get("Cookie", None)
+    if not auth and not cookie:
+            return {
+                "code": "authorization_header_missing",
+                "description": "Authorization header is expected",
+                "status_code": 401}
+    if not cookie:
+        one_day_from_now = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        day_str = one_day_from_now.strftime("%a, %d %b %Y %H:%M:%S GMT")
+        response.headers['Set-Cookie'] = 'auth=' + auth + '; expires=' + day_str + '; path=/'
+    
+    if cookie:
+        if cookie.lower().find('auth=') != 0:
+            return {
+                "code": "invalid_cookie",
+                "description": "Authorization cookie must start with 'auth='",
+                "status_code": 401}
+        parts = cookie[5:].split()
+    else:
+        parts = auth.split()
 
     if parts[0].lower() != "bearer":
         return {
-            "code": "invalid_header",
-            "description": "Authorization header must start with Bearer",
+            "code": "invalid_auth_token",
+            "description": "Authorization token must start with Bearer",
             "status_code": 401}
     elif len(parts) != 3:
-        return {"code": "invalid_header",
+        return {"code": "invalid_auth_token",
                 "description": "Tokens not found",
                 "status_code": 401}
 

@@ -12,3 +12,7 @@
 .file-list > li:hover {
     background: #eeeeee
 }
+
+ul.file-list > a {
+    display: list-item;
+}
