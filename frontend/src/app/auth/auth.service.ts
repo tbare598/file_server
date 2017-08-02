@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { tokenNotExpired } from 'angular2-jwt';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+
 import { myConfig } from './auth.config';
+import { UserProfileModel } from './user-profile.model';
 
 // Avoid name not found warnings
 declare var Auth0Lock: any;
@@ -19,19 +23,39 @@ export class Auth {
       redirect_uri: 'http://localhost:3000', // TODO:SET IN CONFIG
     }
   });
-  userProfile: { name: string };
-  accessToken: string;
-  idToken: string;
+  private _userProfile$: BehaviorSubject<UserProfileModel>
+  private _accessToken: string;
+  private _idToken: string;
+
+  get userProfile(): UserProfileModel {
+    return this._userProfile$.getValue();
+  }
+
+  set userProfile(newUser: UserProfileModel) {
+    this._userProfile$.next(newUser);
+  }
+
+  get userProfile$(): Observable<UserProfileModel> {
+    return this._userProfile$.asObservable();
+  }
+
+  get accessToken(): string {
+    return this._accessToken;
+  }
+
+  get idToken(): string {
+    return this._idToken;
+  }
 
   constructor() {
+    this._userProfile$ = new BehaviorSubject<UserProfileModel>(new UserProfileModel);
+
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', (authResult) => {
       localStorage.setItem('id_token', authResult.idToken);
       localStorage.setItem('access_token', authResult.accessToken);
-      this.accessToken = authResult.accessToken;
-      this.idToken = authResult.idToken;
-      console.log(this.accessToken);
-      console.log(this.idToken);
+      this._accessToken = authResult.accessToken;
+      this._idToken = authResult.idToken;
       // Fetch profile information
       this.lock.getUserInfo(authResult.accessToken, (error, profile) => {
         if (error) {
@@ -44,11 +68,11 @@ export class Auth {
         this.userProfile = profile;
       });
     });
-    this.accessToken = localStorage.getItem('access_token');
-    this.idToken = localStorage.getItem('id_token');
-    if (this.accessToken) {
+    this._accessToken = localStorage.getItem('access_token');
+    this._idToken = localStorage.getItem('id_token');
+    if (this._accessToken) {
       // Fetch profile information
-      this.lock.getUserInfo(this.accessToken, (error, profile) => {
+      this.lock.getUserInfo(this._accessToken, (error, profile) => {
         if (error) {
           // Handle error
           console.log('ERRORRRRRRR!!!!!');
