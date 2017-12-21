@@ -4,6 +4,7 @@
 	"recommendations": [
 		"vscodevim.vim",
 		"robertohuertasm.vscode-icons",
-		"donjayamanne.python"
+		"donjayamanne.python",
+		"jaysonsantos.vscode-flake8"
 	]
 }

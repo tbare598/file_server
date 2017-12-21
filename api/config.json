@@ -1,5 +1,5 @@
 {
-  "host" : "tbare02.home",
+  "host" : "tbare01.home",
   "port" : 8080,
   "debug" : true,
   "reloader" : true,
